@@ -202,12 +202,12 @@ type: Index
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 access: 3rd-Party
 created: '2024-11-14'
-modified: '2024-12-30'
+modified: '2026-03-16'
 position: Consumer
 description: 'Partner APIs related to integrating with a full-service delivery partner. '
 maintainers:
   - FN: Kin Lane
-    email: info@apievangelist.com
+    email: kin@apievangelist.com
 specificationVersion: '0.19'
 common:
   - name: Home | Kroger Developers
