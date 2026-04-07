@@ -1,5 +1,6 @@
 aid: kroger
-url: https://raw.githubusercontent.com/api-search/kroger/refs/heads/main/apis.yml
+url: 
+  https://raw.githubusercontent.com/api-search/kroger/refs/heads/main/apis.yml
 apis:
   - aid: kroger:kroger-authorization-api-partners
     name: Kroger Authorization API (Partners)
@@ -42,7 +43,8 @@ apis:
         type: Documentation
   - aid: kroger:kroger-cart-api-public
     name: Kroger Cart API (Public)
-    description: The Cart API allows you to add an item to an authenticated customers cart.
+    description: The Cart API allows you to add an item to an authenticated 
+      customers cart.
     humanURL: https://developer.kroger.com/api-products/api/cart-api-public
     tags: []
     properties:
@@ -145,8 +147,7 @@ apis:
   - aid: kroger:kroger-products-api-partners
     name: Kroger Products API (Partners)
     description: >-
-      The Products API allows you to search the Kroger product
-      catalog.Pagination
+      The Products API allows you to search the Kroger product catalog.Pagination.
     humanURL: https://developer.kroger.com/api-products/api/product-api-partner
     tags: []
     properties:
@@ -158,18 +159,22 @@ apis:
         type: Documentation
   - aid: kroger:kroger-products-api-public
     name: Kroger Products API (Public)
-    description: The Products API allows you to search the Kroger product catalog.
+    description: The Products API allows you to search the Kroger product 
+      catalog.
     humanURL: https://developer.kroger.com/api-products/api/product-api-public
     tags: []
     properties:
       - name: Kroger Products API (Public)
-        description: The Products API allows you to search the Kroger product catalog.
+        description: The Products API allows you to search the Kroger product 
+          catalog.
         url: https://developer.kroger.com/api-products/api/product-api-public
         type: Documentation
   - aid: kroger:kroger-seamless-delivery-api
     name: Kroger Seamless Delivery API
-    description: Partner APIs related to integrating with a full-service delivery partner.
-    humanURL: https://developer.kroger.com/api-products/api/seamless-delivery-api
+    description: Partner APIs related to integrating with a full-service 
+      delivery partner.
+    humanURL: 
+      https://developer.kroger.com/api-products/api/seamless-delivery-api
     tags: []
     properties:
       - name: Kroger Seamless Delivery API
@@ -184,7 +189,8 @@ apis:
       This contract outlines the APIs agreement for vendors seeking integration
       with Kroger as a locker vendor. The provided APIs enable partners to
       transmit unattended locker pickup orders state updates to Kroger.
-    humanURL: https://developer.kroger.com/api-products/api/unattended-locker-pickup
+    humanURL: 
+      https://developer.kroger.com/api-products/api/unattended-locker-pickup
     tags: []
     properties:
       - name: Kroger Locker Integration APIs (Partners)
@@ -193,7 +199,8 @@ apis:
           integration with Kroger as a locker vendor. The provided APIs enable
           partners to transmit unattended locker pickup orders state updates to
           Kroger.
-        url: https://developer.kroger.com/api-products/api/unattended-locker-pickup
+        url: 
+          https://developer.kroger.com/api-products/api/unattended-locker-pickup
         type: Documentation
 name: Kroger
 tags:
@@ -204,7 +211,8 @@ access: 3rd-Party
 created: '2024-11-14'
 modified: '2026-03-16'
 position: Consumer
-description: 'Partner APIs related to integrating with a full-service delivery partner. '
+description: >-
+  Partner APIs related to integrating with a full-service delivery partner.
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
