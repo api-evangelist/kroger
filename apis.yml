@@ -209,7 +209,7 @@ type: Index
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 access: 3rd-Party
 created: '2024-11-14'
-modified: '2026-03-16'
+modified: '2026-04-28'
 position: Consumer
 description: >-
   Partner APIs related to integrating with a full-service delivery partner.
@@ -219,6 +219,6 @@ maintainers:
 specificationVersion: '0.19'
 common:
   - name: Home | Kroger Developers
-    description: 'null'
+    description: Kroger Developer Portal
     url: https://developer.kroger.com/
     type: Portal
