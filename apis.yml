@@ -218,6 +218,10 @@ maintainers:
     email: kin@apievangelist.com
 specificationVersion: '0.19'
 common:
+  - type: GitHubOrganization
+    url: https://github.com/krogertechnology
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/kroger
   - name: Home | Kroger Developers
     description: Kroger Developer Portal
     url: https://developer.kroger.com/
