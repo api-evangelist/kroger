@@ -226,3 +226,5 @@ common:
     description: Kroger Developer Portal
     url: https://developer.kroger.com/
     type: Portal
+  - type: LLMsTxt
+    url: https://developer.kroger.com/llms.txt
