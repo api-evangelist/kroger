@@ -219,6 +219,8 @@ maintainers:
     email: kin@apievangelist.com
 specificationVersion: '0.19'
 common:
+  - type: DomainSecurity
+    url: security/kroger-domain-security.yml
   - type: GitHubOrganization
     url: https://github.com/krogertechnology
   - type: LinkedIn
