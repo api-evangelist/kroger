@@ -9,6 +9,7 @@ apis:
       or application to call Kroger APIs.
     humanURL: >-
       https://developer.kroger.com/api-products/api/authorization-endpoints-partner
+    baseURL: https://api.kroger.com/v1/
     tags: []
     properties: []
   - aid: kroger:kroger-authorization-api-public
@@ -18,6 +19,7 @@ apis:
       or application to call Kroger APIs.
     humanURL: >-
       https://developer.kroger.com/api-products/api/authorization-endpoints-public
+    baseURL: https://api.kroger.com/v1/
     tags: []
     properties:
       - name: Kroger Authorization API (Public)
@@ -33,6 +35,7 @@ apis:
       The Carts API provides access to create, view, and update a customers
       cart.
     humanURL: https://developer.kroger.com/api-products/api/cart-api-partner
+    baseURL: https://api.kroger.com/v1/
     tags: []
     properties:
       - name: Kroger Cart API (Partner)
@@ -46,6 +49,7 @@ apis:
     description: The Cart API allows you to add an item to an authenticated 
       customers cart.
     humanURL: https://developer.kroger.com/api-products/api/cart-api-public
+    baseURL: https://api.kroger.com/v1/
     tags: []
     properties:
       - name: Kroger Cart API (Public)
@@ -61,6 +65,7 @@ apis:
       available product endpoints. The catalog can be customized for the
       partners based on their needs and requirements.
     humanURL: https://developer.kroger.com/api-products/api/catalog-api
+    baseURL: https://api.kroger.com/v1/
     tags: []
     properties:
       - name: Kroger Catalog API
@@ -77,6 +82,7 @@ apis:
       available product endpoints. The catalog can be customized for the
       partners based on their needs and requirements.
     humanURL: https://developer.kroger.com/api-products/api/catalog-api-v2
+    baseURL: https://api.kroger.com/v1/
     tags: []
     properties:
       - name: Kroger Catalog API V2
@@ -92,6 +98,7 @@ apis:
       The Identity API provides access to the profile information of an
       authenticated Kroger customer.
     humanURL: https://developer.kroger.com/api-products/api/identity-api-partner
+    baseURL: https://api.kroger.com/v1/
     tags: []
     properties:
       - name: Kroger Identity API (Partner)
@@ -106,6 +113,7 @@ apis:
       The Identity API allows you to access the profile ID of an authenticated
       customer.
     humanURL: https://developer.kroger.com/api-products/api/identity-api-public
+    baseURL: https://api.kroger.com/v1/
     tags: []
     properties:
       - name: Kroger Identity API (Public)
@@ -121,6 +129,7 @@ apis:
       and data. Since the needs of our partners determine our Partner APIs, they
       are not open for public consumption.
     humanURL: https://developer.kroger.com/api-products/api/location-api-partner
+    baseURL: https://api.kroger.com/v1/
     tags: []
     properties:
       - name: Kroger Location API (Partner)
@@ -136,6 +145,7 @@ apis:
       The Locations API provides access to all locations, chains, and
       departments that are owned by The Kroger Co.
     humanURL: https://developer.kroger.com/api-products/api/location-api-public
+    baseURL: https://api.kroger.com/v1/
     tags: []
     properties:
       - name: Kroger Location API (Public)
@@ -149,6 +159,7 @@ apis:
     description: >-
       The Products API allows you to search the Kroger product catalog.Pagination.
     humanURL: https://developer.kroger.com/api-products/api/product-api-partner
+    baseURL: https://api.kroger.com/v1/
     tags: []
     properties:
       - name: Kroger Products API (Partners)
@@ -162,6 +173,7 @@ apis:
     description: The Products API allows you to search the Kroger product 
       catalog.
     humanURL: https://developer.kroger.com/api-products/api/product-api-public
+    baseURL: https://api.kroger.com/v1/
     tags: []
     properties:
       - name: Kroger Products API (Public)
@@ -175,6 +187,7 @@ apis:
       delivery partner.
     humanURL: 
       https://developer.kroger.com/api-products/api/seamless-delivery-api
+    baseURL: https://api.kroger.com/v1/
     tags: []
     properties:
       - name: Kroger Seamless Delivery API
@@ -191,6 +204,7 @@ apis:
       transmit unattended locker pickup orders state updates to Kroger.
     humanURL: 
       https://developer.kroger.com/api-products/api/unattended-locker-pickup
+    baseURL: https://api.kroger.com/v1/
     tags: []
     properties:
       - name: Kroger Locker Integration APIs (Partners)
@@ -205,6 +219,15 @@ apis:
 name: Kroger
 tags:
   - Groceries
+  - Grocery Retail
+  - Retail
+  - Ecommerce
+  - Product Catalog
+  - Store Locations
+  - Shopping Cart
+  - Loyalty
+  - OAuth
+  - Partner API
   - Fortune 100
 type: Index
 accessModel:
@@ -222,10 +245,19 @@ accessModel:
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/kroger.png
 access: 3rd-Party
 created: '2024-11-14'
-modified: '2026-04-28'
+modified: '2026-08-27'
 position: Consumer
 description: >-
-  Partner APIs related to integrating with a full-service delivery partner.
+  The Kroger Co. is the largest supermarket operator in the United States and runs a
+  two-tier developer programme from developer.kroger.com. The Public tier is
+  self-service after account and application registration and covers Products,
+  Locations, Identity and Cart, each with a published daily call quota. The Partner
+  tier — Carts, Catalog, Catalog V2, Identity, Locations, Products, Seamless Delivery
+  and Locker Integration — is not self-service and requires a signed contractual
+  agreement with Kroger. Every API is protected by OAuth 2.0 at api.kroger.com, with
+  client-credentials access for catalogue and store data and authorization-code
+  access, with explicit customer consent, for anything that touches a shopper's
+  profile or cart. A separate certification environment runs at api-ce.kroger.com.
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
@@ -241,5 +273,100 @@ common:
     description: Kroger Developer Portal
     url: https://developer.kroger.com/
     type: Portal
-  - type: LlmsText
-    url: https://developer.kroger.com/llms.txt
+  - type: Authentication
+    name: Kroger Authentication Profile
+    description: OAuth 2.0 grants, endpoints, token lifetimes and consent model.
+    url: authentication/kroger-authentication.yml
+  - type: OAuthScopes
+    name: Kroger OAuth Scopes
+    description: The scope strings Kroger names in its own public documentation.
+    url: scopes/kroger-scopes.yml
+  - type: RateLimits
+    name: Kroger Rate Limits
+    description: Published per-endpoint daily call quotas for every Public API.
+    url: rate-limits/kroger-rate-limits.yml
+  - type: Plans
+    name: Kroger Access Tiers
+    description: Public self-service tier and contractual Partner tier; no published prices.
+    url: plans/kroger-plans-pricing.yml
+  - type: ErrorCatalog
+    name: Kroger Error Catalog
+    description: Kroger's two error envelopes, status-code table and documented error codes.
+    url: errors/kroger-problem-types.yml
+  - type: Conventions
+    name: Kroger API Conventions
+    description: Pagination, filtering, versioning, tracing, idempotency and reversibility.
+    url: conventions/kroger-conventions.yml
+  - type: Lifecycle
+    name: Kroger API Lifecycle
+    description: Versioning, deprecation, status page and acceptable-use posture.
+    url: lifecycle/kroger-lifecycle.yml
+  - type: Sandbox
+    name: Kroger Certification Environment
+    description: The api-ce.kroger.com test environment and its coverage gaps.
+    url: sandbox/kroger-sandbox.yml
+  - type: DataModel
+    name: Kroger Data Model
+    description: Product, Item, Location, Chain, Department, Cart, CartItem and Profile.
+    url: data-model/kroger-data-model.yml
+  - type: Conformance
+    name: Kroger Conformance
+    description: Standards Kroger's API does and does not implement, each with evidence.
+    url: conformance/kroger-conformance.yml
+  - type: Packages
+    name: Kroger Client Libraries
+    description: No first-party SDK exists; community clients are recorded with versions.
+    url: packages/kroger-packages.yml
+  - type: MCPServer
+    name: Kroger MCP Candidate
+    description: No Kroger MCP server exists; a candidate tool list derived from published operations.
+    url: mcp/kroger-mcp.yml
+  - type: WellKnown
+    name: Kroger Well-Known Probe
+    description: Every /.well-known/ path probed on four Kroger hosts.
+    url: well-known/kroger-well-known.yml
+  - type: SecurityTxt
+    name: Kroger security.txt
+    description: RFC 9116 security.txt served from www.kroger.com.
+    url: well-known/kroger-security.txt
+  - type: VulnerabilityDisclosure
+    name: The Kroger Co - Vulnerability Disclosure Program
+    description: Bugcrowd-hosted VDP named in Kroger's security.txt.
+    url: security/kroger-vulnerability-disclosure.yml
+  - type: Security
+    name: Kroger Security Disclosure
+    description: Bugcrowd vulnerability disclosure program and RFC 9116 contact.
+    url: https://bugcrowd.com/engagements/kroger-vdp
+  - type: Documentation
+    name: Kroger API Basics
+    description: Environments, error objects, rate limiting, responses, status codes and pagination.
+    url: https://developer.kroger.com/documentation/public/getting-started/apis
+  - type: GettingStarted
+    name: Kroger Quick Start
+    description: Create an account, register an application, make a test call.
+    url: https://developer.kroger.com/documentation/public/getting-started/quick-start
+  - type: APIReference
+    name: Kroger API Reference
+    description: Kroger's Swagger UI API reference catalog.
+    url: https://developer.kroger.com/reference
+  - type: Support
+    name: Kroger API Troubleshooting
+    description: Common errors and error-handling guidance.
+    url: https://developer.kroger.com/documentation/support/api-troubleshooting/troubleshooting
+  - type: TermsOfService
+    name: Acceptable Use of Public APIs
+    description: The binding usage policy for the Kroger Public APIs.
+    url: https://developer.kroger.com/documentation/public/getting-started/acceptable-use
+  - type: PrivacyPolicy
+    name: Kroger Privacy Policy
+    description: Kroger customer privacy policy.
+    url: https://www.kroger.com/i/privacy-policy
+  - type: Postman
+    name: Kroger Public APIs Postman Collection
+    description: Kroger's forkable Postman collection plus per-environment variable files.
+    url: https://developer.kroger.com/documentation/public/getting-started/postman
+x-enrichment:
+  date: '2026-08-27'
+  status: enriched
+  artifacts_added: 14
+  pass: local-v1
