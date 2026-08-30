@@ -1,0 +1,117 @@
+specification: API Commons Authentication
+specificationVersion: '0.1'
+provider: Kroger
+providerId: kroger
+generated: '2026-08-27'
+method: searched
+source: >-
+  Kroger developer documentation, read anonymously from the portal's own content
+  API (https://developer.kroger.com/api/v1/developer/content/search.json, HTTP
+  200) because developer.kroger.com renders every page client-side.
+docs:
+  - https://developer.kroger.com/documentation/public/security/guides-oauth
+  - https://developer.kroger.com/documentation/public/security/service-to-service
+  - https://developer.kroger.com/documentation/public/security/customer
+  - https://developer.kroger.com/documentation/public/security/refresh-token-tutorial
+  - https://developer.kroger.com/documentation/public/getting-started/quick-start
+summary: >-
+  Every Kroger Public and Partner API is protected by OAuth 2.0. There is no API
+  key, no basic-auth-to-the-resource and no mTLS surface. Applications register
+  on the developer portal for a client_id/client_secret pair, exchange them at a
+  single token endpoint, and present a bearer access token to the resource
+  server. Scopes are assigned to the application at registration time and cannot
+  be self-expanded at runtime.
+schemes:
+  - id: kroger_oauth2
+    type: oauth2
+    description: >-
+      OAuth 2.0 authorization server operated by Kroger at api.kroger.com. Three
+      grant types are documented.
+    flows:
+      clientCredentials:
+        tokenUrl: https://api.kroger.com/v1/connect/oauth2/token
+        client_authentication: >-
+          HTTP Basic — Authorization: Basic base64(client_id:client_secret)
+        request_content_type: application/x-www-form-urlencoded
+        parameters:
+          grant_type: client_credentials
+          scope: space-delimited list of registered scopes
+        use_when: >-
+          The application requests general data or data owned by the application
+          (Products, Locations).
+      authorizationCode:
+        authorizationUrl: https://api.kroger.com/v1/connect/oauth2/authorize
+        tokenUrl: https://api.kroger.com/v1/connect/oauth2/token
+        client_authentication: >-
+          HTTP Basic — Authorization: Basic base64(client_id:client_secret)
+        parameters:
+          response_type: code
+          client_id: registered application client id
+          redirect_uri: must exactly match a redirect URL registered for the app
+          scope: space-delimited list of registered scopes
+        pkce: >-
+          Documented as available — the portal's Postman guide instructs
+          "Authorization Code (with PKCE)". Not stated as mandatory.
+        use_when: >-
+          The application acts on behalf of an authenticated Kroger customer
+          (Identity, Cart).
+      refreshToken:
+        tokenUrl: https://api.kroger.com/v1/connect/oauth2/token
+        parameters:
+          grant_type: refresh_token
+          refresh_token: the refresh token issued with the original access token
+        note: >-
+          Refresh tokens are only issued by the Authorization Code grant. A
+          refresh returns BOTH a new access token and a new refresh token, and
+          the old refresh token becomes invalid once used (single-use rotation).
+resource_authorization:
+  header: 'Authorization: Bearer {access_token}'
+  applies_to: all Public and Partner API endpoints
+token:
+  access_token:
+    type: bearer
+    format: JWT (RS256; iss api.kroger.com, carries scope, aud, sub, exp, iat)
+    lifetime_seconds: 1800
+    lifetime_note: 'Documented as "Access tokens expire every thirty minutes"; expires_in returns 1800.'
+  refresh_token:
+    lifetime: six months
+    rotation: single-use — invalid once redeemed
+consent:
+  customer_consent_required: true
+  description: >-
+    Under the Authorization Code grant the customer signs in at Kroger and is
+    shown the specific scopes the application is requesting before granting. The
+    token carries both the scope set and the customer's consent.
+  denial_behavior: >-
+    error=access_denied&error_description=The+resource+owner+denied+the+request
+    is appended to the registered redirect URL.
+errors:
+  unauthenticated:
+    status: 401
+    body: '{"error":"invalid_request","error_description":"The access_token is missing"}'
+    observed: 'Live probe of https://api.kroger.com/v1/products, 2026-08-27, HTTP 401.'
+  expired_token:
+    status: 401
+    body: '{"error":"invalid_token","error_description":"The access token is invalid or has expired"}'
+  missing_scope:
+    status: 403
+    body: '{"errors":{"timestamp":1567098508093,"code":"Forbidden","reason":"missing required scopes"}}'
+not_supported:
+  - openIdConnect — no /.well-known/openid-configuration on any Kroger host (404)
+  - oauth-authorization-server metadata (RFC 8414) — 404 on api.kroger.com and api-ce.kroger.com
+  - oauth-protected-resource metadata (RFC 9728) — 404 on api.kroger.com
+  - dynamic client registration (RFC 7591) — registration is a human form on the developer portal
+  - apiKey, mutualTLS, http basic against the resource server
+onboarding:
+  public_apis: >-
+    Self-service. Create an account on developer.kroger.com, verify by email,
+    register an application, receive client_id/client_secret.
+  partner_apis: >-
+    Not self-service. Requires a submitted Partner Request and a contractual
+    agreement with Kroger.
+  scope_changes: >-
+    Scopes are assigned during app registration and can only be changed by
+    request to Kroger; an application cannot request a scope it was not granted.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

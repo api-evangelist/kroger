@@ -1,0 +1,89 @@
+specification: API Commons OAuth Scopes
+specificationVersion: '0.1'
+provider: Kroger
+providerId: kroger
+generated: '2026-08-27'
+method: searched
+source: >-
+  Kroger developer documentation, read anonymously from the portal content API
+  (https://developer.kroger.com/api/v1/developer/content/search.json, HTTP 200).
+docs:
+  - https://developer.kroger.com/documentation/public/security/guides-oauth
+  - https://developer.kroger.com/documentation/public/security/auth-tutorial
+  - https://developer.kroger.com/documentation/support/api-troubleshooting/troubleshooting
+note: >-
+  Kroger does NOT publish a consolidated scope reference page. There is no
+  OpenAPI in this repo to derive a securitySchemes.oauth2.scopes block from, and
+  the portal's own API-catalog endpoints (/api/v1/developer/apis,
+  /contracts/document/...) return 401 anonymously. Every scope listed below is a
+  literal string quoted in a public Kroger doc page; nothing here is inferred
+  from a naming pattern. Treat the list as incomplete by construction — the
+  authoritative set is the one Kroger assigns to an application at registration.
+naming_convention:
+  documented: >-
+    "In general, scopes are a composition of the resource, the shape of the data,
+    and the action, if available. For example, the scope product.full.read gives
+    the application permission to read the full response of the product
+    resource."
+  shape: '<resource>.<data-shape>[.<action>]  |  <resource>.<data-shape>:<rw>'
+assignment:
+  self_service: false
+  description: >-
+    Kroger assigns a set of scopes to the application during registration, driven
+    by which API Products were selected. An application is not authorized to use
+    any scope outside that set; changes are by request to Kroger.
+enforcement:
+  missing_scope_status: 403
+  missing_scope_body: '{"errors":{"timestamp":...,"code":"Forbidden","reason":"missing required scopes"}}'
+scopes:
+  - scope: product.compact
+    api: Products API
+    grant: client_credentials
+    description: >-
+      Read the compact product response shape. Named in the Kroger Postman guide
+      as the scope to configure for the Public API production collection, and
+      present in the documented example JWT payload.
+    evidence: https://developer.kroger.com/documentation/public/getting-started/postman
+  - scope: product.full.read
+    api: Products API
+    grant: client_credentials
+    description: >-
+      Read the full product response shape. Used as the worked example in the
+      "Understanding OAuth2" scope section.
+    evidence: https://developer.kroger.com/documentation/public/security/guides-oauth
+  - scope: product.personalized
+    api: Products API
+    grant: authorization_code
+    description: >-
+      Product data personalized to the authenticated customer. Requested
+      alongside cart.basic:rw and profile.full in the Auth Code Tutorial.
+    evidence: https://developer.kroger.com/documentation/public/security/auth-tutorial
+  - scope: cart.basic:rw
+    api: Cart API
+    grant: authorization_code
+    description: >-
+      Read and write the authenticated customer's cart — the scope the Cart API
+      tutorial requests before adding, updating or removing items.
+    evidence: https://developer.kroger.com/documentation/public/security/auth-tutorial
+  - scope: profile.full
+    api: Identity API
+    grant: authorization_code
+    description: >-
+      Access the authenticated customer's profile. Requested in the Auth Code
+      Tutorial's scope string.
+    evidence: https://developer.kroger.com/documentation/public/security/auth-tutorial
+  - scope: coupon.basic
+    api: Coupon API (not listed in this repo's apis[])
+    grant: client_credentials
+    description: >-
+      Appears in the documented example access-token payload
+      (scope: "product.compact coupon.basic"). Recorded because it is a real
+      published string, and it is evidence of a Kroger API surface this catalog
+      does not currently carry an entry for.
+    evidence: https://developer.kroger.com/documentation/public/security/service-to-service
+    confidence: medium
+scope_count: 6
+completeness: partial
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

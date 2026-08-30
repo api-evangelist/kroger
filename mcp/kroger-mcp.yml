@@ -1,0 +1,127 @@
+specification: API Commons MCP Server
+specificationVersion: '0.1'
+provider: Kroger
+providerId: kroger
+generated: '2026-08-27'
+method: derived
+status: candidate
+source: >-
+  Derived from the operations Kroger publishes in its own API-product overview
+  pages, read anonymously from the portal content API
+  (https://developer.kroger.com/api/v1/developer/content/search.json, HTTP 200).
+  No Kroger-operated MCP server exists.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: unknown
+  verified: probed
+  note: >-
+    Kroger ships no MCP server, hosted or local. Probed 2026-08-27:
+    https://api.kroger.com/mcp → HTTP 404 (GET and POST tools/list);
+    mcp.kroger.com → NXDOMAIN; developer.kroger.com/mcp → the site's SPA catch-all
+    shell, not an MCP endpoint. The word "MCP" does not appear anywhere in
+    Kroger's 42-page public documentation corpus. Two community npm packages
+    (@striderlabs/mcp-kroger, @pipeworx/mcp-kroger) wrap the Public API as MCP
+    servers, but they are third-party: an agent using one is trusting an
+    unaffiliated maintainer with a Kroger customer's OAuth consent. They are
+    recorded in ../packages/kroger-packages.yml and are deliberately NOT recorded
+    as a deployment here.
+candidate_tools:
+  note: >-
+    A faithful projection of Kroger's OWN documented operations into MCP tool
+    shape, so the gap between what Kroger publishes and what an agent could call
+    is legible. These tools do not exist. Parameters are the documented
+    filter.<field> query parameters; no parameter is invented.
+  tools:
+    - name: search_products
+      category: catalog
+      rest: 'GET /v1/products'
+      description: Find products by search term, brand or product id.
+      scope: product.compact
+      inputSchema_source: documented filter parameters
+      parameters: [filter.term, filter.locationId, filter.brand, filter.fulfillment, filter.productId, filter.limit, filter.start]
+    - name: get_product
+      category: catalog
+      rest: 'GET /v1/products/{productId}'
+      description: Return product details for a specific product.
+      scope: product.compact
+      parameters: [productId, filter.locationId]
+    - name: search_locations
+      category: locations
+      rest: 'GET /v1/locations'
+      description: Return stores matching a zip code, lat/long or chain/department filter.
+      parameters: [filter.zipCode.near, filter.latLong.near, filter.lat.near, filter.lon.near, filter.radiusInMiles, filter.chain, filter.department, filter.locationId, filter.limit]
+    - name: get_location
+      category: locations
+      rest: 'GET /v1/locations/{locationId}'
+      description: Return the details of a specific location.
+      parameters: [locationId]
+    - name: list_chains
+      category: locations
+      rest: 'GET /v1/chains'
+      description: List all retail banners owned by The Kroger Co.
+      note: >-
+        Required in practice — Chain.domain is the only way to turn a product's
+        productPageURI into a usable URL.
+    - name: get_chain
+      category: locations
+      rest: 'GET /v1/chains/{name}'
+      description: Return the details of a specific chain.
+    - name: list_departments
+      category: locations
+      rest: 'GET /v1/departments'
+      description: List departments for a specific location.
+    - name: get_department
+      category: locations
+      rest: 'GET /v1/departments/{departmentId}'
+      description: Return the details of a specific department.
+    - name: get_profile
+      category: identity
+      rest: 'GET /v1/identity/profile'
+      description: Return the authenticated customer's profile id.
+      scope: profile.full
+      requires_customer_consent: true
+      constraint: >-
+        Acceptable Use PROHIBITS using the profile id to map or store data about a
+        customer, and prohibits sharing it. An MCP tool returning it would be
+        handing an agent an identifier it is contractually forbidden to persist.
+    - name: add_to_cart
+      category: cart
+      rest: 'PUT (Add to cart) — Public tier; POST /v1/carts/{cartId}/items — Partner tier'
+      description: Add an item to the authenticated customer's cart.
+      scope: 'cart.basic:rw'
+      requires_customer_consent: true
+      write: true
+      reversible: partner-tier-only
+      constraint: >-
+        Acceptable Use forbids adding items to a customer's cart without their
+        explicit request. The Public tier publishes NO remove operation, so a
+        Public-tier agent has no documented undo. See the reversibility block in
+        ../conventions/kroger-conventions.yml.
+    - name: remove_cart_item
+      category: cart
+      rest: 'DELETE /v1/carts/{cartId}/items/{upc}'
+      description: Remove an item from the customer's cart.
+      tier: partner
+      write: true
+      reversal_for: add_to_cart
+    - name: update_cart_item
+      category: cart
+      rest: 'PUT /v1/carts/{cartId}/items/{upc}'
+      description: Update the quantity of an item already in the cart.
+      tier: partner
+      write: true
+  tool_count: 12
+agent_readiness_note: >-
+  The binding constraint on a Kroger agent surface is not the missing MCP server —
+  it is authorization. Cart and Identity require the OAuth Authorization Code
+  grant with live customer consent, scopes are assigned by Kroger at app
+  registration and cannot be self-expanded, the write tier that can undo a cart
+  change is Partner-only and contractual, and the Acceptable Use policy
+  explicitly prohibits both silent cart additions and cross-retailer price
+  comparison. Any MCP server over this API inherits all four.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
