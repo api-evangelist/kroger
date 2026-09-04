@@ -269,7 +269,7 @@ image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/kroger.png
 access: 3rd-Party
 created: '2024-11-14'
 modified: '2026-08-27'
-position: Consumer
+position: Consuming
 description: >-
   The Kroger Co. is the largest supermarket operator in the United States and runs a
   two-tier developer programme from developer.kroger.com. The Public tier is
@@ -340,10 +340,11 @@ common:
     name: Kroger Client Libraries
     description: No first-party SDK exists; community clients are recorded with versions.
     url: packages/kroger-packages.yml
-  - type: MCPServer
+  - type: X-MCPServerCandidate
     name: Kroger MCP Candidate
     description: No Kroger MCP server exists; a candidate tool list derived from published operations.
     url: mcp/kroger-mcp.yml
+    note: 'Renamed from MCPServer 2026-09-03 (roadmap#247): the manifest self-describes as status: candidate — a tool list derived from the published API contracts, not an existing server. The scorer already read the manifest and reported mcp_server correctly; the MCPServer type was crediting the artifact-type surfaces with a server that does not exist.'
   - type: WellKnown
     name: Kroger Well-Known Probe
     description: Every /.well-known/ path probed on four Kroger hosts.
