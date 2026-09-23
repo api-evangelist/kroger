@@ -4,11 +4,17 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: Kroger
 providerId: kroger
 created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-05'
-reconciled: false
+# 2026-08-27: upgraded generated -> searched. The two-tier access model is now
+# confirmed against Kroger's own documentation, read anonymously from the portal
+# content API (https://developer.kroger.com/api/v1/developer/content/search.json,
+# HTTP 200) because developer.kroger.com renders every page client-side. The
+# 2026-05-04 sweep's conclusion held up: Kroger publishes NO monetary pricing for
+# either tier. What is now sourced rather than assumed is HOW each tier is
+# obtained and what it is capped at.
+method: searched
+generated: '2026-08-27'
+modified: '2026-08-27'
+reconciled: true
 tags:
   - Groceries
   - Retail
@@ -17,11 +23,24 @@ description: Kroger Developer Portal does not publish a public commercial pricin
   (Identity, Locations, Products, Cart, Authorization) are free for registered developers, while the
   Partner APIs (Cart Partner, Location Partner, Products Partners, Seamless Delivery, Locker Integration)
   require a partner agreement negotiated with Kroger Digital. No per-tier prices are listed publicly.
+plan_count: 2
 sources:
-  - https://developer.kroger.com/
-  - https://developer.kroger.com/manage/documentation/policies
-notes: No public pricing page; access is gated by registration (Public APIs) or partner agreement (Partner
-  APIs). Tiers, quotas, and pricing must be confirmed directly with Kroger Digital.
+  - https://developer.kroger.com/documentation/public/getting-started/quick-start
+  - https://developer.kroger.com/documentation/partner
+  - https://developer.kroger.com/documentation/support/website-help/applications
+  - https://developer.kroger.com/documentation/public/getting-started/apis
+notes: >-
+  No public pricing page exists and no price is published for either tier. The
+  Public tier is genuinely self-service and free: create an account, verify by
+  email, register an application, receive client credentials. Its cost is
+  expressed as a QUOTA rather than a price — 10,000 Products calls/day, 5,000
+  Cart, 5,000 Identity, 1,600 per Locations endpoint, shared across all clients
+  (see ../rate-limits/kroger-rate-limits.yml). The Partner tier is not
+  self-service at all: "Partner APIs are not available through our self-service
+  app registration" and access "requires a contractual agreement with Kroger."
+  Kroger's own guidance is to build on Public APIs first and request Partner
+  access only when you know you will exceed the published limits or need
+  Partner-only functionality.
 plans:
   - id: kroger-public-developer
     name: Public Developer

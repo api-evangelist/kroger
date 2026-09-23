@@ -1,0 +1,147 @@
+specification: API Commons Data Model
+specificationVersion: '0.1'
+provider: Kroger
+providerId: kroger
+generated: '2026-08-27'
+method: derived
+source: >-
+  Derived from Kroger's own published response bodies and parameter references,
+  read anonymously from the portal content API
+  (https://developer.kroger.com/api/v1/developer/content/search.json, HTTP 200).
+  No OpenAPI exists in this repo — Kroger's specs sit behind the developer-portal
+  login — so this graph is built from documented example payloads and the
+  documented filter parameters, not from $ref links.
+note: >-
+  Fields are recorded only where Kroger names them in a published example or
+  parameter table. Types are inferred from the example values and marked where
+  uncertain. Nothing here is invented to complete a shape.
+identifiers:
+  - id: productId
+    format: 13-digit GS1 GTIN-13, zero-padded (e.g. "0001111043115")
+    note: Identical in value to `upc` in every published example.
+  - id: upc
+    format: 13-digit GS1 GTIN-13
+    note: >-
+      The addressable key for cart line items — DELETE /v1/carts/{cartId}/items/{upc}.
+  - id: locationId
+    format: 8-character string
+    note: >-
+      Length is enforced server-side; the documented 400 error is
+      PRODUCT-2011-400 "Field 'locationId' must have a length of 8 characters".
+  - id: cartId
+    format: UUID v4 (e.g. "f4c5282c-cbd6-4c55-8257-4a808f5ed4d6")
+  - id: departmentId
+    format: 2-character numeric string (e.g. "09" for pharmacy)
+  - id: profileId
+    format: UUID
+    note: >-
+      Acceptable Use explicitly PROHIBITS using the profile ID to map or store
+      data associated with a customer, and prohibits sharing it. It is an
+      identifier you may display and must not join on.
+entities:
+  - name: Product
+    endpoint: /v1/products
+    description: An item in the Kroger product catalog.
+    fields:
+      - {name: productId, type: string}
+      - {name: upc, type: string}
+      - {name: brand, type: string}
+      - {name: description, type: string}
+      - {name: categories, type: array<string>}
+      - {name: taxonomies, type: array<object>}
+      - {name: images, type: array<object>}
+      - {name: items, type: array<Item>}
+      - {name: itemInformation, type: object}
+      - {name: temperature, type: object}
+      - {name: aisleLocations, type: array<AisleLocation>}
+      - {name: productPageURI, type: string, note: 'URI fragment only — must be prefixed with the chain domain from /v1/chains to form a URL.'}
+    location_conditional_fields:
+      note: >-
+        These are OMITTED unless filter.locationId is supplied. A caller that
+        forgets the location filter silently receives a product with no price and
+        no availability rather than an error.
+      fields:
+        - {name: price, type: object, note: 'regular and promo price'}
+        - {name: nationalPrice, type: object, note: 'regular and promo national price'}
+        - {name: fulfillment, type: object, note: 'instore, shiptohome, delivery, curbside booleans'}
+        - {name: aisleLocations, type: array}
+        - {name: stockLevel, type: enum, values: [HIGH, LOW, TEMPORARILY_OUT_OF_STOCK], note: 'Omitted when unavailable.'}
+  - name: Item
+    parent: Product
+    description: A sellable variant of a product (size, fulfillment, price).
+    fields:
+      - {name: size, type: string}
+      - {name: price, type: object}
+      - {name: fulfillment, type: object}
+      - {name: inventory, type: object}
+  - name: AisleLocation
+    parent: Product
+    description: Where the item sits in a given store.
+  - name: Location
+    endpoint: /v1/locations
+    description: A Kroger-family store.
+    fields:
+      - {name: locationId, type: string}
+      - {name: chain, type: string}
+      - {name: address, type: object}
+      - {name: geolocation, type: object}
+      - {name: hours, type: object}
+      - {name: departments, type: array<Department>}
+    filters: [filter.zipCode.near, filter.latLong.near, filter.lat.near, filter.lon.near, filter.radiusInMiles, filter.chain, filter.department, filter.locationId, filter.limit]
+  - name: Chain
+    endpoint: /v1/chains
+    description: A retail banner owned by The Kroger Co.
+    fields:
+      - {name: name, type: string}
+      - {name: division, type: string}
+      - {name: domain, type: string, note: 'Required to build a product page URL from productPageURI.'}
+  - name: Department
+    endpoint: /v1/departments
+    description: A department within a location (e.g. pharmacy = departmentId 09).
+    fields:
+      - {name: departmentId, type: string}
+      - {name: name, type: string}
+  - name: Cart
+    endpoint: /v1/carts
+    description: An authenticated customer's fulfillable cart.
+    fields:
+      - {name: id, type: string, format: uuid}
+      - {name: name, type: string, note: 'e.g. "Fulfillable"'}
+      - {name: items, type: array<CartItem>}
+  - name: CartItem
+    parent: Cart
+    endpoint: /v1/carts/{cartId}/items
+    fields:
+      - {name: upc, type: string}
+      - {name: description, type: string}
+      - {name: quantity, type: integer}
+      - {name: allowSubstitutes, type: boolean}
+      - {name: specialInstructions, type: string}
+      - {name: modality, type: enum, values: [PICKUP], note: 'Only PICKUP appears in published examples; the full enum is not documented.'}
+      - {name: createdDate, type: string, format: date-time}
+  - name: Profile
+    endpoint: /v1/identity/profile
+    description: >-
+      The authenticated customer. The PUBLIC Identity API returns the profile ID
+      only; the PARTNER Identity API returns the full profile plus loyalty card
+      number and supports lookup by email address.
+    fields:
+      - {name: id, type: string, format: uuid}
+      - {name: loyaltyCardNumber, type: string, tier: partner}
+relationships:
+  - {from: Product, to: Item, type: has_many, via: items}
+  - {from: Product, to: AisleLocation, type: has_many, via: aisleLocations}
+  - {from: Product, to: Location, type: belongs_to, via: filter.locationId, note: 'Scoping relationship — supplied as a request filter, not stored on the product.'}
+  - {from: Location, to: Chain, type: belongs_to, via: chain}
+  - {from: Location, to: Department, type: has_many, via: departments}
+  - {from: Cart, to: CartItem, type: has_many, via: items}
+  - {from: CartItem, to: Product, type: belongs_to, via: upc}
+  - {from: Cart, to: Profile, type: belongs_to, via: 'the access token subject (no explicit field)'}
+  - {from: Product, to: Chain, type: belongs_to, via: 'productPageURI + Chain.domain', note: 'Cross-API join Kroger documents explicitly: a product page URL cannot be built without a call to /v1/chains.'}
+envelope:
+  success: '{ "data": <object|array>, "meta": { "pagination": { "start", "limit", "total" } } }'
+  note: 'Single-resource reads return `data` as an object; collections return an array.'
+render: null
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

@@ -1,0 +1,95 @@
+specification: API Commons Lifecycle
+specificationVersion: '0.1'
+provider: Kroger
+providerId: kroger
+generated: '2026-08-27'
+method: searched
+source: >-
+  Kroger developer documentation, read anonymously from the portal content API
+  (https://developer.kroger.com/api/v1/developer/content/search.json, HTTP 200),
+  plus DNS/HTTP probes for a status page.
+docs:
+  - https://developer.kroger.com/documentation/public/getting-started/apis
+  - https://developer.kroger.com/documentation/support/api-troubleshooting/troubleshooting
+versioning:
+  scheme: uri-path
+  current_version: v1
+  base: https://api.kroger.com/v1/
+  policy_published: false
+  note: >-
+    Two versions of one product are visible in the catalog — Catalog API and
+    Catalog API V2 — so Kroger does version its Partner surface, but no public
+    statement exists on how versions are introduced, how long a prior version is
+    supported, or what counts as a breaking change.
+deprecation:
+  policy_published: false
+  sunset_header: not-documented
+  deprecation_header: not-documented
+  rfc8594: false
+  deprecated_operations: []
+  note: >-
+    No public deprecation policy, no RFC 8594 Sunset/Deprecation header contract,
+    and no advance-notice commitment. Kroger DOES maintain a deprecation
+    discipline internally — its portal carries an API style guide with a
+    "breaking-log" and "evolvable-apis" chapter, and a whole
+    /documentation/deprecated-api-style-guide/ tree — but every one of those
+    pages is internal-only, redirecting to a private GitHub repository
+    (krogertechnology/apip-apidm-ui-docs, HTTP 404 anonymously). The governance
+    exists; the external commitment does not.
+changelog:
+  published: false
+  url: null
+  note: >-
+    No dated public changelog or release-notes feed for the Public or Partner
+    APIs. Release-notes pages exist in the portal's route table but only under
+    the internal style-guide tree.
+status_page:
+  published: false
+  url: null
+  probes:
+    - url: https://status.kroger.com/
+      status: 000
+      result: NXDOMAIN — host does not resolve
+      checked: '2026-08-27'
+  note: >-
+    No status page, uptime history or incident feed is published for the Kroger
+    APIs. 503 Service Unavailable is not even in the published status-code table.
+sla:
+  published: false
+  note: No availability, latency or support-response SLA is published for Public APIs. Partner terms are contractual and unpublished.
+support:
+  channels:
+    - type: email
+      value: APISupport@kroger.com
+      note: >-
+        Published as the API support contact on Kroger's API reference pages.
+    - type: docs
+      value: https://developer.kroger.com/documentation/support/api-troubleshooting/troubleshooting
+    - type: partner-request
+      value: https://developer.kroger.com/documentation/partner
+      note: Route to request Partner API access; a Kroger developer-team member responds.
+token_lifecycle:
+  access_token_ttl_seconds: 1800
+  refresh_token_ttl: six months
+  refresh_token_rotation: single-use
+  note: >-
+    The clearest lifecycle commitment Kroger publishes is about credentials, not
+    about the APIs themselves.
+policy_documents:
+  - name: Acceptable Use of Public APIs
+    url: https://developer.kroger.com/documentation/public/getting-started/acceptable-use
+    binds:
+      - 'Products: no cross-retailer price comparison; no altering product data; no systematic scraping or crawling to build a database.'
+      - 'Locations: no tracking/storing customer location; no altering location data; no systematic scraping.'
+      - 'Cart: items may only be added at the customer''s explicit request; no tracking or storing cart-derived data.'
+      - 'Identity: the profile ID may be displayed but not used to map or store data about a customer, and not shared.'
+    note: >-
+      This is the closest thing Kroger publishes to an agent policy, and it is
+      restrictive in a way an autonomous shopping agent must read before acting:
+      the no-silent-cart-additions rule and the no-price-comparison rule both cut
+      directly against common agent use cases.
+  - name: Branding Guidelines
+    url: https://developer.kroger.com/documentation/public/getting-started/branding
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

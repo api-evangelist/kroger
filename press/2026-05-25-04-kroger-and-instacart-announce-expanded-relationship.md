@@ -1,7 +1,9 @@
 ---
 title: Kroger and Instacart Announce Expanded Relationship ...
 url: https://ir.kroger.com/news/news-details/2025/Kroger-and-Instacart-Announce-Expanded-Relationship-Investing-in-AI-to-Simplify-Customer-Experience-Improve-Efficiency/default.aspx
-date: '2026-05-25'
+published: ''
+date_basis: harvested
+harvested: '2026-05-25'
 query: '"Kroger" press release artificial intelligence'
 position: 4
 source: serpapi-google

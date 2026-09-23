@@ -1,0 +1,173 @@
+specification: API Commons Conformance
+specificationVersion: '0.1'
+provider: Kroger
+providerId: kroger
+generated: '2026-08-27'
+method: searched
+source: >-
+  Kroger developer documentation, read anonymously from the portal content API
+  (https://developer.kroger.com/api/v1/developer/content/search.json, HTTP 200),
+  plus live probes of api.kroger.com and its /.well-known/ paths.
+note: >-
+  There is no published OpenAPI in this repo to lint against — Kroger's specs are
+  rendered behind the developer-portal login. Every assertion below is anchored
+  to a quoted docs statement or an observed HTTP response, never to a spec we do
+  not hold.
+conformance:
+  - id: oauth2
+    name: OAuth 2.0 (RFC 6749)
+    conforms: true
+    evidence: >-
+      Authorization Code, Client Credentials and Refresh Token grants documented
+      with conformant endpoints (/v1/connect/oauth2/authorize,
+      /v1/connect/oauth2/token), Basic client authentication, and RFC 6749
+      section 5.2 error bodies ({"error":"invalid_request",
+      "error_description":"The access_token is missing"} observed live on
+      https://api.kroger.com/v1/products, HTTP 401, 2026-08-27).
+    source: https://developer.kroger.com/documentation/public/security/guides-oauth
+  - id: oauth2-pkce
+    name: PKCE (RFC 7636)
+    conforms: true
+    confidence: medium
+    evidence: >-
+      Kroger's own Postman guide instructs setting the grant type to
+      "Authorization Code (with PKCE)". Support is therefore published, though it
+      is not stated to be required and no code_challenge_method list is given.
+    source: https://developer.kroger.com/documentation/public/getting-started/postman
+  - id: oidc
+    name: OpenID Connect
+    conforms: false
+    evidence: >-
+      No id_token in any documented token response and no discovery document —
+      https://api.kroger.com/.well-known/openid-configuration returns HTTP 404
+      (probed 2026-08-27). Identity is exposed as a resource API
+      (/v1/identity/profile), not as an OIDC claim set.
+  - id: rfc8414
+    name: OAuth 2.0 Authorization Server Metadata
+    conforms: false
+    evidence: 'https://api.kroger.com/.well-known/oauth-authorization-server → HTTP 404 (2026-08-27); same on api-ce.kroger.com.'
+  - id: rfc9728
+    name: OAuth 2.0 Protected Resource Metadata
+    conforms: false
+    evidence: 'https://api.kroger.com/.well-known/oauth-protected-resource → HTTP 404 (2026-08-27).'
+  - id: rfc7591
+    name: Dynamic Client Registration
+    conforms: false
+    evidence: >-
+      Client registration is a human web form on developer.kroger.com; Partner
+      access additionally requires a signed contract. No programmatic
+      registration endpoint is published.
+  - id: rfc9457
+    name: Problem Details for HTTP APIs (RFC 9457 / RFC 7807)
+    conforms: false
+    evidence: >-
+      Kroger publishes two proprietary error envelopes — {error, error_description}
+      and {errors:{timestamp, code, reason}} — neither of which uses
+      application/problem+json or carries a type URI.
+    source: https://developer.kroger.com/documentation/public/getting-started/apis
+  - id: rfc9116
+    name: security.txt
+    conforms: true
+    evidence: >-
+      https://www.kroger.com/.well-known/security.txt returns HTTP 200 with
+      Contact, Preferred-Languages, Canonical and Hiring fields. Deviates from
+      the RFC in omitting the REQUIRED Expires field and in serving text/html.
+    source: https://www.kroger.com/.well-known/security.txt
+  - id: rfc8594
+    name: Sunset / Deprecation headers
+    conforms: false
+    evidence: No deprecation or sunset header contract is published; no public deprecation policy exists.
+  - id: pagination
+    name: Documented pagination contract
+    conforms: true
+    evidence: >-
+      filter.limit / filter.start request parameters and a meta.pagination
+      response object carrying total, start and limit, documented with a worked
+      request/response pair. Note the Locations API is explicitly NOT paginated.
+    source: https://developer.kroger.com/documentation/public/getting-started/apis
+  - id: idempotency
+    name: Idempotency keys for unsafe methods
+    conforms: false
+    evidence: >-
+      No idempotency header, no replay contract and no defined 409 trigger for the
+      Cart write surface (POST/PUT/DELETE on /v1/carts).
+  - id: rate-limit-headers
+    name: Machine-readable rate-limit signalling
+    conforms: false
+    evidence: >-
+      Daily quotas are published as prose numbers (10,000 / 5,000 / 1,600 per
+      day) but no X-RateLimit-* or RateLimit-* header is documented, and 429 is
+      absent from Kroger's published status-code table.
+  - id: json-api
+    name: 'JSON:API'
+    conforms: false
+    evidence: 'Responses use a proprietary {data, meta} envelope, not the JSON:API media type or member rules.'
+  - id: fhir
+    name: HL7 FHIR
+    conforms: false
+    evidence: >-
+      Not applicable to the published surface. Kroger Health operates pharmacy and
+      clinic services, but no FHIR endpoint is exposed on the developer portal.
+  - id: scim
+    name: SCIM
+    conforms: false
+    evidence: No provisioning surface is published.
+  - id: odata
+    name: OData
+    conforms: false
+    evidence: No $metadata surface; filters use a proprietary filter.<field> convention.
+domain_standards:
+  note: >-
+    REWARD-ONLY check. Grocery retail has no single API standard the way banking
+    has FDX or telecom has CAMARA, so absence here is not a penalty. Recorded
+    below is the one industry identifier scheme Kroger's contract genuinely
+    speaks, and the notable ones it does not.
+  standards:
+    - id: gs1-gtin
+      name: GS1 GTIN / UPC product identification
+      conforms: true
+      confidence: high
+      evidence: >-
+        The Products API uses the GS1 trade item number as its primary key, not a
+        Kroger-internal id: responses carry both `upc` and `productId` holding the
+        same 13-digit GTIN-13 value ("0001111043115"), and the Cart API addresses
+        line items by UPC — the reversal path is literally
+        DELETE /v1/carts/{cartId}/items/{upc}. A caller who already speaks GS1
+        can join Kroger product data to any other GS1-keyed catalogue with no
+        bespoke mapping table.
+      spec_location: >-
+        Products API response body fields `upc` and `productId`; Cart API item
+        path parameter `{upc}`.
+      source: https://developer.kroger.com/documentation/api-products/public/products/overview
+    - id: gs1-gpc
+      name: GS1 Global Product Classification
+      conforms: false
+      evidence: >-
+        Products carry `categories` and `taxonomies` arrays, but these are Kroger
+        merchandising categories ("Snacks", "Dairy", "Baking Goods") with no
+        stated mapping to GPC bricks or any external classification.
+    - id: schema-org-product
+      name: schema.org/Product
+      conforms: false
+      evidence: No JSON-LD or schema.org vocabulary is used in API responses.
+    - id: ncpdp
+      name: NCPDP SCRIPT (pharmacy)
+      conforms: false
+      evidence: >-
+        Kroger operates pharmacies, and pharmacy is one of the filterable store
+        departments (filter.department), but no pharmacy transaction API is
+        published to developers.
+compliance:
+  published: false
+  certifications: []
+  trust_center: null
+  note: >-
+    No developer-facing trust center, SOC 2 / ISO 27001 / PCI attestation page or
+    compliance program is published on the API surface. The only security
+    programme reachable from the developer path is the Bugcrowd vulnerability
+    disclosure program named in www.kroger.com/.well-known/security.txt. Kroger's
+    consumer privacy policy (https://www.kroger.com/i/privacy-policy, HTTP 200)
+    governs customer data but makes no API-specific commitment.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

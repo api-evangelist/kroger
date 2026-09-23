@@ -1,0 +1,110 @@
+specification: API Commons Sandbox
+specificationVersion: '0.1'
+provider: Kroger
+providerId: kroger
+generated: '2026-08-27'
+method: searched
+source: >-
+  Kroger developer documentation, read anonymously from the portal content API
+  (https://developer.kroger.com/api/v1/developer/content/search.json, HTTP 200),
+  plus a live probe of the certification host.
+docs:
+  - https://developer.kroger.com/documentation/public/getting-started/apis
+  - https://developer.kroger.com/documentation/support/website-help/applications
+  - https://developer.kroger.com/documentation/public/getting-started/postman
+published: true
+model: separate-environment
+summary: >-
+  Kroger runs a genuinely separate certification (CE) environment on its own
+  host. It is NOT a test-mode key against the production host: credentials are
+  environment-bound, an application is registered into exactly one environment,
+  and the environment cannot be changed after registration.
+environments:
+  - id: production
+    name: Production
+    base_url: https://api.kroger.com/v1/
+    description: A live environment for production traffic.
+    live: true
+  - id: certification
+    name: Certification (CE)
+    base_url: https://api-ce.kroger.com/v1/
+    description: A certified environment for testing API integrations.
+    live: false
+    probe:
+      url: https://api-ce.kroger.com/v1/products?filter.term=milk
+      http_status: 401
+      body: '{"message":"Unauthorized"}'
+      checked: '2026-08-27'
+      note: >-
+        Host resolves and rejects unauthenticated calls — the environment is
+        real. Note it returns a DIFFERENT unauthenticated error body than
+        production ({"message":"Unauthorized"} vs the OAuth-shaped
+        {"error":"invalid_request","error_description":"The access_token is
+        missing"}), so error handling written against one environment is not
+        guaranteed to parse the other.
+credentials:
+  key_prefixes: none-published
+  separation: >-
+    Credentials are issued per environment. "After registering your application,
+    your credentials will only allow you to authenticate API requests for your
+    chosen environment."
+  dual_registration_required: true
+  dual_registration_note: >-
+    "When registering your application in both environments, you must register
+    your application twice with a different name." The environment of an app
+    cannot be changed after registration.
+data_fidelity:
+  warning: >-
+    "Since the certification environment is only for testing API integrations, do
+    not rely on it for complete and accurate data."
+coverage_gaps:
+  untestable_in_certification:
+    - api: Identity API
+      testable_in_ce: false
+    - api: Cart API
+      testable_in_ce: false
+  gap_note: >-
+    The certification environment has NO customer accounts, so the two APIs that
+    require the Authorization Code grant — Identity and Cart — cannot be
+    exercised there at all. Kroger's own instruction is to test them in
+    PRODUCTION against a test Kroger account created through the normal customer
+    signup form. This is the sharpest limitation of the sandbox: the only write
+    surface Kroger publishes can only be rehearsed against live customer data.
+test_accounts:
+  available: true
+  where: production only
+  method: >-
+    Create a Kroger customer account through the standard Kroger account form and
+    use it as a test user during the Authorization Code flow.
+test_values:
+  cards: []
+  bank_accounts: []
+  tokens: []
+  note: >-
+    Kroger publishes no test cards, test tokens or fixture data — the APIs do not
+    take payment, and product/location data in CE is real-but-unreliable rather
+    than fixtured.
+time_simulation:
+  test_clocks: false
+  note: No time-travel or clock-simulation tooling is published.
+triggers_and_fixtures:
+  supported: false
+  note: No event/fixture trigger tooling is published.
+tooling:
+  postman:
+    published: true
+    collections:
+      - name: Kroger Public APIs
+        note: >-
+          Kroger publishes a forkable Postman collection plus separate downloadable
+          Production and Certification environment files, one per registered app.
+          The collection's canonical Postman URL is rendered client-side on the
+          docs page and was not readable anonymously, so no URL is asserted here.
+    docs: https://developer.kroger.com/documentation/public/getting-started/postman
+    guidance: >-
+      Kroger explicitly warns not to store client_id/client_secret in Postman
+      "Initial Value" fields, since those sync to the Postman cloud; set them as
+      Current Value with type `secret`.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

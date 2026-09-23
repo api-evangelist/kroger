@@ -1,0 +1,193 @@
+specification: API Commons Conventions
+specificationVersion: '0.1'
+provider: Kroger
+providerId: kroger
+generated: '2026-08-27'
+method: searched
+source: >-
+  Kroger developer documentation, read anonymously from the portal content API
+  (https://developer.kroger.com/api/v1/developer/content/search.json, HTTP 200).
+docs:
+  - https://developer.kroger.com/documentation/public/getting-started/apis
+  - https://developer.kroger.com/documentation/api-products/public/products/overview
+  - https://developer.kroger.com/documentation/api-products/public/locations/overview
+  - https://developer.kroger.com/documentation/api-products/partner/carts/tutorial
+cross_links:
+  authentication: ../authentication/kroger-authentication.yml
+  scopes: ../scopes/kroger-scopes.yml
+  errors: ../errors/kroger-problem-types.yml
+  lifecycle: ../lifecycle/kroger-lifecycle.yml
+  rate_limits: ../rate-limits/kroger-rate-limits.yml
+  sandbox: ../sandbox/kroger-sandbox.yml
+auth:
+  style: oauth2-bearer
+  header: 'Authorization: Bearer {access_token}'
+  detail: See ../authentication/kroger-authentication.yml
+media_types:
+  request: application/json; charset=utf-8 (application/x-www-form-urlencoded at the token endpoint)
+  response: application/json
+  note: 'All API responses are returned as a JSON Object.'
+versioning:
+  style: uri-path
+  current: v1
+  example: https://api.kroger.com/v1/products
+  policy_published: false
+  note: >-
+    The version lives in the path (/v1/). Kroger publishes an internal API style
+    guide with a versioning chapter, but that section of the portal is gated —
+    no public versioning or breaking-change policy is readable.
+pagination:
+  style: offset-limit
+  request_parameters:
+    - name: filter.limit
+      description: Limits the number of resources returned.
+    - name: filter.start
+      description: Number of results to skip.
+  response_envelope: meta.pagination
+  response_fields:
+    - name: total
+      type: integer
+      description: The total number of resources matching the request.
+    - name: start
+      type: integer
+      description: The starting point of results in the response.
+    - name: limit
+      type: integer
+      description: The limit of results in the response.
+  defaults:
+    products: 10 results per page
+    locations: >-
+      NOT paginated. Default limit 9,999 results, maximum 9,999 via filter.limit;
+      a 10-mile default radius applies when a near-point filter is supplied, and
+      widening filter.limit without widening filter.radiusInMiles silently
+      under-returns.
+  cursor_supported: false
+  example: 'GET /v1/products?filter.term=milk&filter.limit=2'
+filtering:
+  convention: 'All query filters are namespaced `filter.<field>`.'
+  examples:
+    - filter.term
+    - filter.locationId
+    - filter.brand
+    - filter.fulfillment
+    - filter.productId
+    - filter.limit
+    - filter.start
+    - filter.zipCode.near
+    - filter.latLong.near
+    - filter.lat.near
+    - filter.lon.near
+    - filter.radiusInMiles
+    - filter.chain
+    - filter.department
+  note: >-
+    Location-scoped enrichment is opt-in and consequential: price, fulfillment,
+    aisle location and stockLevel are OMITTED from a product response unless
+    filter.locationId is supplied.
+field_expansion:
+  supported: false
+  note: >-
+    No `expand`/`fields` sparse-fieldset mechanism is documented on the Public
+    APIs. Response shaping is expressed as scope variants instead
+    (product.compact vs product.full.read).
+metadata:
+  customer_metadata_fields: false
+  response_meta_envelope: 'meta { pagination { start, limit, total } }'
+request_tracing:
+  request_id_header: none-documented
+  correlation_id: none-documented
+  note: >-
+    No request-id or correlation-id header is documented on the API surface, and
+    neither error envelope carries one. Support escalation therefore has no
+    provider-published request handle.
+idempotency:
+  supported: false
+  header: null
+  note: >-
+    No idempotency key, no safe-retry contract, and no documented 409-on-replay
+    semantics for the Cart write surface (POST /v1/carts, POST/PUT/DELETE on
+    /v1/carts/{id}/items/{upc}). 409 Conflict is listed in the status table but
+    its trigger is not defined. An agent retrying a failed add-to-cart cannot
+    tell whether the first attempt landed.
+dry_run_mode:
+  supported: false
+  note: >-
+    No preview/validate/simulate mode is published for any write operation. The
+    certification environment (api-ce.kroger.com) is the only rehearsal surface,
+    and it cannot exercise the Cart or Identity APIs because it has no customer
+    accounts.
+error_envelope:
+  shape: two-envelope (auth-error and api-error)
+  rfc9457: false
+  detail: See ../errors/kroger-problem-types.yml
+rate_limit_signaling:
+  headers_published: false
+  status_on_exhaustion: undocumented
+  detail: See ../rate-limits/kroger-rate-limits.yml
+reversibility:
+  grade: documented
+  rationale: >-
+    A genuine reversal path exists and is documented for the only write surface
+    Kroger publishes — the Cart API — but NO time window or terminal state is
+    stated anywhere. Kroger never says how long an item can be removed from a
+    cart, when a cart becomes immutable, or what happens once the customer
+    proceeds to Kroger Checkout. Grade is `documented` (0.4), not `verified`,
+    because asserting a window Kroger has not published would be an invented
+    number that could cost a user a real grocery order.
+  write_surfaces:
+    - surface: Cart — add item
+      operation: 'POST /v1/carts/{cartId}/items'
+      reversal:
+        available: true
+        operation: 'DELETE /v1/carts/{cartId}/items/{upc}'
+        name: Remove an Item from the Cart
+        window: null
+        window_source: null
+        note: >-
+          Documented and demonstrated in the Partner Cart tutorial's
+          removeItemFromCartOnClick flow. No window stated.
+      docs: https://developer.kroger.com/documentation/api-products/partner/carts/tutorial
+    - surface: Cart — update item quantity
+      operation: 'PUT /v1/carts/{cartId}/items/{upc}'
+      reversal:
+        available: true
+        operation: 'PUT /v1/carts/{cartId}/items/{upc} with the prior quantity'
+        name: Re-issue the update with the previous value
+        window: null
+        window_source: null
+        note: >-
+          The update is a full replacement of quantity, so it is self-reversing
+          only if the caller retained the prior value. Kroger publishes no
+          version, revision or history read that would let a caller recover it.
+      docs: https://developer.kroger.com/documentation/api-products/partner/carts/tutorial
+    - surface: Cart — create cart
+      operation: 'POST /v1/carts'
+      reversal:
+        available: false
+        operation: null
+        window: null
+        note: >-
+          No cart delete/void operation is documented. The tutorial's
+          getOrCreateCart pattern reuses an existing fulfillable cart rather than
+          deleting a surplus one.
+    - surface: Public Cart API — add to cart
+      operation: 'PUT (Add to cart)'
+      reversal:
+        available: false
+        operation: null
+        window: null
+        note: >-
+          The PUBLIC Cart API publishes exactly one operation — "Add to cart" —
+          and no remove. Removal is only documented on the PARTNER Carts API. A
+          Public-tier agent can therefore put an item into a customer's cart and
+          has no published way to take it back out. Kroger's Acceptable Use page
+          separately prohibits adding items without the customer's explicit
+          request, which is the policy standing in for the missing undo.
+      docs: https://developer.kroger.com/documentation/api-products/public/cart/overview
+  read_only_surfaces:
+    - Products API — read only, reversibility na
+    - Locations API — read only, reversibility na
+    - Identity API — read only, reversibility na
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

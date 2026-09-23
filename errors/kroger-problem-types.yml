@@ -1,0 +1,191 @@
+specification: API Commons Error Catalog
+specificationVersion: '0.1'
+provider: Kroger
+providerId: kroger
+generated: '2026-08-27'
+method: searched
+source: >-
+  Kroger developer documentation, read anonymously from the portal content API
+  (https://developer.kroger.com/api/v1/developer/content/search.json, HTTP 200),
+  plus one live unauthenticated probe of https://api.kroger.com/v1/products.
+docs:
+  - https://developer.kroger.com/documentation/public/getting-started/apis
+  - https://developer.kroger.com/documentation/support/api-troubleshooting/troubleshooting
+format: proprietary
+rfc9457: false
+content_type: application/json
+note: >-
+  Kroger does not use RFC 9457 / RFC 7807 problem+json. It publishes TWO distinct
+  and incompatible error envelopes, chosen by whether the failure happened in the
+  authorization layer or in the API layer. An agent must be able to parse both:
+  they share no field names, and neither carries a machine-stable type URI.
+envelopes:
+  - id: auth-error
+    name: Auth Error
+    applies_to: >-
+      Failures related to authentication or authorization — the OAuth 2.0
+      endpoints and bearer-token rejection at the resource server.
+    shape: RFC 6749 section 5.2 style
+    content_type: application/json
+    fields:
+      - name: error
+        type: string
+        description: A brief description of the error.
+      - name: error_description
+        type: string
+        description: A more detailed description of the error.
+    example: |-
+      {
+        "error": "invalid_token",
+        "error_description": "The access token is invalid or has expired"
+      }
+  - id: api-error
+    name: API Error
+    applies_to: Failures related to an API request itself.
+    shape: proprietary — a single `errors` OBJECT (not an array)
+    content_type: application/json
+    fields:
+      - name: errors.timestamp
+        type: integer
+        description: Epoch milliseconds at which the error occurred.
+      - name: errors.code
+        type: string
+        description: >-
+          Server code. Documented as "in many cases … a combination of the API
+          name, an identification number, and the status code of the response"
+          — e.g. PRODUCT-2011-400. Some codes are instead a bare reason phrase
+          (e.g. "Forbidden"), so the format is not reliably parseable.
+      - name: errors.reason
+        type: string
+        description: A short human description of the cause.
+    example: |-
+      {
+        "errors": {
+          "timestamp": 1568391692365,
+          "code": "PRODUCT-2011-400",
+          "reason": "Field 'locationId' must have a length of 8 characters"
+        }
+      }
+status_codes:
+  - code: 200
+    title: OK
+    description: The request was successful.
+  - code: 201
+    title: Created
+    description: The request was successful, and a new resource was created.
+  - code: 204
+    title: No Content
+    description: The request was successful but returned no body.
+  - code: 400
+    title: Bad Request
+    description: The request could not be completed due to invalid syntax.
+    envelope: api-error
+  - code: 401
+    title: Unauthorized
+    description: >-
+      The client is not authorized to access the resource. Kroger notes this
+      "often means that the client has not authenticated."
+    envelope: auth-error
+  - code: 403
+    title: Forbidden
+    description: The client does not have access to the resource.
+    envelope: api-error
+  - code: 404
+    title: Not Found
+    description: The requested resource could not be found.
+  - code: 409
+    title: Conflict
+    description: The request conflicts with the current state of the server.
+  - code: 500
+    title: Internal Server Error
+    description: There was an internal error, and the request could not be completed.
+  - code: 429
+    title: Too Many Requests
+    published: false
+    description: >-
+      NOT in Kroger's published status-code table, despite Public APIs carrying
+      hard daily quotas. The response on quota exhaustion is undocumented.
+problem_types:
+  - id: missing-access-token
+    envelope: auth-error
+    status: 401
+    code: invalid_request
+    title: The access_token is missing
+    reason: No Authorization header was supplied.
+    remediation: >-
+      Obtain a token from https://api.kroger.com/v1/connect/oauth2/token and send
+      it as `Authorization: Bearer {token}`.
+    verified: >-
+      Observed live 2026-08-27 — GET https://api.kroger.com/v1/products?filter.term=milk
+      returned HTTP 401 with exactly this body.
+  - id: invalid-or-expired-token
+    envelope: auth-error
+    status: 401
+    code: invalid_token
+    title: The access token is invalid or has expired
+    reason: Access tokens expire after 1,800 seconds.
+    remediation: >-
+      Request a new access token. Under the Authorization Code grant, redeem the
+      refresh token instead of re-prompting the customer.
+    source: https://developer.kroger.com/documentation/support/api-troubleshooting/troubleshooting
+  - id: missing-required-scopes
+    envelope: api-error
+    status: 403
+    code: Forbidden
+    title: missing required scopes
+    reason: >-
+      The API requires a scope that was not included in the token request, or was
+      never assigned to the application at registration.
+    remediation: >-
+      Request a new token including the required scope. If the application was not
+      granted that scope, it must be added by Kroger — scopes cannot be
+      self-expanded.
+    source: https://developer.kroger.com/documentation/support/api-troubleshooting/troubleshooting
+  - id: missing-or-invalid-parameter
+    envelope: api-error
+    status: 400
+    code: '<API>-<n>-400'
+    title: Missing or invalid required parameter
+    reason: >-
+      A required filter parameter was omitted or malformed. Kroger's examples are
+      PRODUCT-2011-400 ("Field 'locationId' must have a length of 8 characters")
+      and COUPON-4102-400 ("Invalid Merchant specified").
+    remediation: Validate user-supplied parameters client-side before the call.
+    source: https://developer.kroger.com/documentation/support/api-troubleshooting/troubleshooting
+  - id: redirect-uri-mismatch
+    envelope: auth-error
+    status: 400
+    code: INVALID_REQUEST
+    title: The redirect_uri did not match the registered redirect_uri for this application
+    reason: >-
+      The redirect_uri sent in the authorization request is not one of the URLs
+      registered for the application.
+    remediation: >-
+      Send a redirect_uri that exactly matches a registered value, or register the
+      URL on the developer portal.
+    note: >-
+      Note the casing: this envelope returns error "INVALID_REQUEST" upper-cased,
+      where the token endpoint returns "invalid_request" lower-cased. A client
+      matching on the string must handle both.
+    source: https://developer.kroger.com/documentation/support/api-troubleshooting/troubleshooting
+  - id: access-denied
+    envelope: query-string (not JSON)
+    status: 302
+    code: access_denied
+    title: The resource owner denied the request
+    reason: >-
+      The customer declined to grant the application permission on the Kroger
+      authorization screen.
+    remediation: >-
+      Handle the error at the registered redirect URL. This is a third error
+      SHAPE — key/value pairs appended to the redirect URL, not a JSON body.
+    example: 'http://YourRedirectURL.com/error=access_denied&error_description=The+resource+owner+denied+the+request'
+    source: https://developer.kroger.com/documentation/support/api-troubleshooting/troubleshooting
+error_count: 6
+gaps:
+  - No machine-readable error-code registry is published; the code list above is every code Kroger illustrates by example.
+  - No type URI, no documentation link, and no correlation/request id in either envelope.
+  - The 429 / quota-exhaustion response is entirely undocumented.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

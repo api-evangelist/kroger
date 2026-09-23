@@ -1,7 +1,9 @@
 ---
 title: Kroger links with AI retail analytics firm to boost ...
 url: https://www.grocerydive.com/news/kroger-partners-ai-retail-analytics-firm-intelligence-node/707091/
-date: '2026-05-25'
+published: ''
+date_basis: harvested
+harvested: '2026-05-25'
 query: '"Kroger" press release artificial intelligence'
 position: 3
 source: serpapi-google

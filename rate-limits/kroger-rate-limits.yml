@@ -4,45 +4,128 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: Kroger
 providerId: kroger
 created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-05'
-reconciled: false
+modified: '2026-08-27'
+generated: '2026-08-27'
+method: searched
+source: >-
+  Kroger developer documentation, read anonymously from the portal content API
+  (https://developer.kroger.com/api/v1/developer/content/search.json, HTTP 200).
+  This SUPERSEDES the 2026-05-04 generated artifact, which recorded the limits as
+  "undocumented" because the HTML docs host renders client-side. Kroger does
+  publish per-API daily limits; they are just unreachable without executing JS.
+reconciled: true
 tags:
   - Rate Limiting
   - Groceries
   - Retail
-description: Kroger Developer Portal does not publish numeric per-second or per-minute rate limits for
-  its Public or Partner APIs. Limits are governed by the developer agreement and are typically negotiated
-  with Kroger Digital for partner integrations.
-sources:
-  - https://developer.kroger.com/
-  - https://developer.kroger.com/manage/documentation/policies
-notes: No published numeric rate limits; consumers should expect HTTP 429 throttling and use exponential
-  backoff. Specific limits must be confirmed via Kroger developer support or the partner agreement.
-responseCodes:
-  throttled: 429
-  serviceUnavailable: 503
+description: >-
+  Kroger publishes a daily call ceiling for each Public API. The limits are
+  applied PER ENDPOINT and shared equally across ALL clients — Kroger states it
+  does not currently support per-client limits. The window resets 24 hours after
+  the client's first call to that endpoint. Partner APIs are documented as having
+  no rate limit.
+docs:
+  - https://developer.kroger.com/documentation/public/getting-started/apis
+  - https://developer.kroger.com/documentation/api-products/public/products/overview
+  - https://developer.kroger.com/documentation/api-products/public/locations/overview
+  - https://developer.kroger.com/documentation/api-products/public/cart/overview
+  - https://developer.kroger.com/documentation/api-products/public/identity/overview
+model:
+  granularity: per-endpoint
+  shared_across_clients: true
+  per_client_limits: false
+  quote: >-
+    "All public APIs have a daily rate limit that is applied equally across all
+    clients. Since the rate limits are applied to individual endpoints, we do not
+    currently support individual rate limits by client. Rate limits reset 24
+    hours after the first call to an endpoint."
+  window: 24h rolling from the client's first call to the endpoint
+limit_count: 4
 limits:
-  - name: Public API access
-    scope: api-key
-    metric: varies
-    limit: 'undocumented; honor 429 responses'
-  - name: Partner API access
+  - name: Products API
+    api: Kroger Products API (Public)
+    endpoint: /v1/products
+    scope: per-endpoint
+    window: 1d
+    limit: 10000
+    unit: calls
+    burst: null
+    note: >-
+      The 10,000 calls may be distributed across all operations that use the
+      /products endpoint (product search and product details) as the client sees
+      fit.
+    source: https://developer.kroger.com/documentation/api-products/public/products/overview
+  - name: Locations API
+    api: Kroger Location API (Public)
+    endpoint: /v1/locations, /v1/chains, /v1/departments
+    scope: per-endpoint
+    window: 1d
+    limit: 1600
+    unit: calls
+    burst: null
+    note: >-
+      1,600 calls per day PER ENDPOINT, across three endpoints. Distributable
+      across the operations that share an endpoint (list / details / HEAD query).
+    source: https://developer.kroger.com/documentation/api-products/public/locations/overview
+  - name: Cart API
+    api: Kroger Cart API (Public)
+    endpoint: /v1/cart
+    scope: per-endpoint
+    window: 1d
+    limit: 5000
+    unit: calls
+    burst: null
+    source: https://developer.kroger.com/documentation/api-products/public/cart/overview
+  - name: Identity API
+    api: Kroger Identity API (Public)
+    endpoint: /v1/identity/profile
+    scope: per-endpoint
+    window: 1d
+    limit: 5000
+    unit: calls
+    burst: null
+    source: https://developer.kroger.com/documentation/api-products/public/identity/overview
+  - name: Partner APIs
+    api: all Partner APIs
     scope: account
-    metric: varies
-    limit: 'see partner agreement'
+    window: null
+    limit: null
+    unit: null
+    note: >-
+      "At this time, there are no rate limits on the number of requests to
+      Partner APIs." Kroger nonetheless recommends Partner access precisely for
+      clients who expect to exceed Public limits.
+    source: https://developer.kroger.com/documentation/public/getting-started/apis
+response_headers:
+  published: false
+  headers: []
+  note: >-
+    Kroger documents NO rate-limit response headers. There is no X-RateLimit-*,
+    no RateLimit-* (RFC 9331 draft) and no documented Retry-After. The published
+    HTTP status table for Public and Partner APIs (200, 201, 204, 400, 401, 403,
+    404, 409, 500) does not include 429 at all, so the response an agent receives
+    on exhaustion is not stated anywhere in the public docs. This is the single
+    largest runtime gap in Kroger's rate-limit posture: the number is published,
+    the signal is not, and a client cannot discover its remaining budget without
+    counting calls itself.
+responseCodes:
+  throttled: undocumented
+  serviceUnavailable: 503
 policies:
-  - name: Backoff Strategy
-    description: Honor Retry-After when present; otherwise apply exponential backoff with jitter on 429
-      responses.
+  - name: Batch Instead of Loop
+    description: >-
+      Kroger's documented mitigation: "use parameters to fetch multiple resources
+      in a single request" — e.g. the productId filter to return several products
+      rather than one call per product.
+    source: https://developer.kroger.com/documentation/public/getting-started/apis
   - name: Token Lifetime
-    description: OAuth 2 access tokens issued by the Kroger Authorization endpoints have short lifetimes;
-      cache and refresh rather than re-requesting on every call.
-  - name: Partner Limits Are Negotiated
-    description: Partner-tier limits are agreed in the partner contract; Kroger may apply per-application
-      and per-account ceilings independent of any public values.
+    description: >-
+      Access tokens live 1,800 seconds. Cache and reuse rather than re-requesting
+      a token per call; token requests are themselves calls.
+  - name: Partner Limits Are Contractual
+    description: >-
+      Partner-tier ceilings, where any exist, are set in the partner agreement
+      rather than published.
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

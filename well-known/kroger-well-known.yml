@@ -1,0 +1,80 @@
+specification: API Commons Well-Known
+specificationVersion: '0.1'
+provider: Kroger
+providerId: kroger
+generated: '2026-08-27'
+method: probed
+source: >-
+  Direct anonymous HTTP probes of every /.well-known/ path on the Kroger API
+  host (api.kroger.com), the certification host (api-ce.kroger.com), the
+  developer portal host (developer.kroger.com) and the corporate host
+  (www.kroger.com), 2026-08-27.
+note: >-
+  ONE real hit: www.kroger.com serves an RFC 9116 security.txt naming the Kroger
+  Bugcrowd vulnerability disclosure program. developer.kroger.com is a Gatsby
+  SPA whose Akamai catch-all answers HTTP 200 with the same 790,646-byte HTML
+  shell for EVERY path, including /.well-known/*; those rows are recorded as
+  html-shell misses, not documents. api.kroger.com and api-ce.kroger.com return
+  honest text/plain 404s.
+hosts:
+  - host: www.kroger.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+        file: kroger-security.txt
+        content_type: text/html
+        bytes: 168
+        note: >-
+          Body is a valid RFC 9116 security.txt (Contact/Preferred-Languages/
+          Canonical/Hiring). Served with content-type text/html, which is a
+          spec deviation, but the document itself is real.
+      - path: /.well-known/agent-card.json
+        status: 000
+        file: null
+        note: 'HTTP/2 stream reset (INTERNAL_ERROR) — no response body received.'
+  - host: api.kroger.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+        file: null
+      - path: /.well-known/openid-configuration
+        status: 404
+        file: null
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+        file: null
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+        file: null
+      - path: /.well-known/api-catalog
+        status: 404
+        file: null
+      - path: /.well-known/ai-plugin.json
+        status: 404
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 404
+        file: null
+      - path: /.well-known/agent.json
+        status: 404
+        file: null
+  - host: api-ce.kroger.com
+    documents:
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+        file: null
+  - host: developer.kroger.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+        file: null
+        note: >-
+          MISS. 200 returns the 790,646-byte Gatsby SPA shell (text/html), not a
+          security.txt. An SPA catch-all, not a served document.
+      - path: /.well-known/agent-card.json
+        status: 200
+        file: null
+        note: 'MISS. Same SPA shell — the dominant well-known false positive.'
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
