@@ -235,6 +235,8 @@ maintainers:
   email: kin@apievangelist.com
 specificationVersion: '0.23'
 common:
+- type: FinOps
+  url: finops/kroger-finops.yml
 - type: Website
   url: https://kroger.com
 - type: DomainSecurity
