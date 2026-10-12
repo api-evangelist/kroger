@@ -1,0 +1,18 @@
+generated: '2026-10-12'
+method: searched
+source:
+- https://monid.ai/tools/kroger
+checked:
+- https://composio.dev/toolkits/kroger
+- https://monid.ai/tools/kroger
+- https://n8n.io/integrations/kroger/
+- https://zapier.com/apps/kroger/integrations
+summary: null
+marketplace_apps:
+- marketplace: monid
+  channel: agent-gateway
+  app: kroger
+  url: https://monid.ai/tools/kroger
+  identity: slug
+edges: []
+templates: []
