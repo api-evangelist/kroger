@@ -1,4 +1,4 @@
-# Kroger (kroger)
+# Kroger
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,169 +64,138 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Partner APIs related to integrating with a full-service delivery partner.
+The Kroger Co. is the largest supermarket operator in the United States and runs a two-tier developer programme from developer.kroger.com. The Public tier is self-service after account and application registration and covers Products, Locations, Identity and Cart, each with a published daily call quota. The Partner tier — Carts, Catalog, Catalog V2, Identity, Locations, Products, Seamless Delivery and Locker Integration — is not self-service and requires a signed contractual agreement with Kroger. Every API is protected by OAuth 2.0 at api.kroger.com, with client-credentials access for catalogue and store data and authorization-code access, with explicit customer consent, for anything that touches a shopper's profile or cart. A separate certification environment runs at api-ce.kroger.com.
 
-**URL:** [Visit APIs.json URL](https://raw.githubusercontent.com/api-search/kroger/refs/heads/main/apis.yml)
+**Areas:** Groceries · Grocery Retail · Retail · E-Commerce · Product Catalog · Store Locations · Shopping Cart · Loyalty · Authentication · Partner API · Fortune 100
 
-## Scope
+## Kroger on APIs.io
 
-- **Type:** Index
-- **Position:** Consumer
-- **Access:** 3rd-Party
+Everything profiled for Kroger is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/kroger/](https://apis.io/providers/kroger/)** — or go straight to one of the APIs or properties below.
 
-## Tags
+### APIs (14)
 
-- Groceries
+- [Kroger Authorization API (Partners)](https://apis.io/apis/kroger/kroger-authorization-api-partners/) — The authorization endpoints provide a token that will allow your service or application to call Kroger APIs.
+- [Kroger Authorization API (Public)](https://apis.io/apis/kroger/kroger-authorization-api-public/) — The authorization endpoints provide a token that will allow your service or application to call Kroger APIs.
+- [Kroger Cart API (Partner)](https://apis.io/apis/kroger/kroger-cart-api-partner/) — The Carts API provides access to create, view, and update a customers cart.
+- [Kroger Cart API (Public)](https://apis.io/apis/kroger/kroger-cart-api-public/) — The Cart API allows you to add an item to an authenticated customers cart.
+- [Kroger Catalog API](https://apis.io/apis/kroger/kroger-catalog-api/) — Catalog API integration let partners to access Krogers catalog data via available product endpoints. The catalog can be customized for the partners based on…
+- [Kroger Catalog API V2](https://apis.io/apis/kroger/kroger-catalog-api-v2/) — Catalog API integration let partners to access Krogers catalog data via available product endpoints. The catalog can be customized for the partners based on…
+- [Kroger Identity API](https://apis.io/apis/kroger/kroger-identity-api/) — The Identity API provides access to the profile information of an authenticated Kroger customer.
+- [Kroger Identity API (Public)](https://apis.io/apis/kroger/kroger-identity-api-public/) — The Identity API allows you to access the profile ID of an authenticated customer.
+- [Kroger Location API (Partner)](https://apis.io/apis/kroger/kroger-location-api-partner/) — Partner APIs enable official partners to access strategic functionality and data. Since the needs of our partners determine our Partner APIs, they are not…
+- [Kroger Location API (Public)](https://apis.io/apis/kroger/kroger-location-api-public/) — The Locations API provides access to all locations, chains, and departments that are owned by The Kroger Co.
+- [Kroger Products API (Partners)](https://apis.io/apis/kroger/kroger-products-api-partners/) — The Products API allows you to search the Kroger product catalog.Pagination.
+- [Kroger Products API (Public)](https://apis.io/apis/kroger/kroger-products-api-public/) — The Products API allows you to search the Kroger product catalog.
+- [Kroger Seamless Delivery API](https://apis.io/apis/kroger/kroger-seamless-delivery-api/) — Partner APIs related to integrating with a full-service delivery partner.
+- [Kroger Locker Integration APIs (Partners)](https://apis.io/apis/kroger/kroger-locker-integration-apis-partners/) — This contract outlines the APIs agreement for vendors seeking integration with Kroger as a locker vendor. The provided APIs enable partners to transmit…
 
-## Timestamps
+### Published properties
 
-- **Created:** 2024-11-14
-- **Modified:** 2026-03-16
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-## APIs
+#### MCP servers (1)
 
-### Kroger Authorization API (Partners)
+Model Context Protocol servers that expose the API to agents.
 
-The authorization endpoints provide a token that will allow your service or application to call Kroger APIs.
+- [Kroger MCP Candidate](https://apis.io/servers/kroger/kroger-mcp-candidate/)
 
-**Human URL:** [https://developer.kroger.com/api-products/api/authorization-endpoints-partner](https://developer.kroger.com/api-products/api/authorization-endpoints-partner)
+#### Security (3)
 
-### Kroger Authorization API (Public)
+Authentication, trust centre, and vulnerability disclosure.
 
-The authorization endpoints provide a token that will allow your service or application to call Kroger APIs.
+- [Kroger Authentication](https://apis.io/security/kroger/kroger-authentication/)
+- [Kroger Domain Security](https://apis.io/security/kroger/kroger-domain-security/)
+- [Kroger Vulnerability Disclosure](https://apis.io/security/kroger/kroger-vulnerability-disclosure/)
 
-**Human URL:** [https://developer.kroger.com/api-products/api/authorization-endpoints-public](https://developer.kroger.com/api-products/api/authorization-endpoints-public)
+#### OAuth scopes (1)
 
-#### Properties
+The permissions the API asks for.
 
-- [Documentation](https://developer.kroger.com/api-products/api/authorization-endpoints-public)
+- [Kroger Scopes](https://apis.io/scopes/kroger/kroger-scopes/)
 
-### Kroger Cart API (Partner)
+#### Plans and pricing (1)
 
-The Carts API provides access to create, view, and update a customers cart.
+Published plans, tiers and prices.
 
-**Human URL:** [https://developer.kroger.com/api-products/api/cart-api-partner](https://developer.kroger.com/api-products/api/cart-api-partner)
+- [Kroger Plans Pricing](https://apis.io/plans/kroger/kroger-plans-pricing/)
 
-#### Properties
+#### Rate limits (1)
 
-- [Documentation](https://developer.kroger.com/api-products/api/cart-api-partner)
+Published request limits.
 
-### Kroger Cart API (Public)
+- [Kroger Rate Limits](https://apis.io/rate-limits/kroger/kroger-rate-limits/)
 
-The Cart API allows you to add an item to an authenticated customers cart.
+#### FinOps (1)
 
-**Human URL:** [https://developer.kroger.com/api-products/api/cart-api-public](https://developer.kroger.com/api-products/api/cart-api-public)
+What the API costs to run, by operation.
 
-#### Properties
+- [Kroger Finops](https://apis.io/finops/kroger/kroger-finops/)
 
-- [Documentation](https://developer.kroger.com/api-products/api/cart-api-public)
+## Where to find this API
 
-### Kroger Catalog API
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
-Catalog API integration let partners to access Krogers catalog data via available product endpoints. The catalog can be customized for the partners based on their needs and requirements.
+- [Website](https://kroger.com)
+- [Documentation](https://developer.kroger.com/documentation/public/getting-started/apis)
+- [Getting started](https://developer.kroger.com/documentation/public/getting-started/quick-start)
+- [API reference](https://developer.kroger.com/reference)
+- [Support](https://developer.kroger.com/documentation/support/api-troubleshooting/troubleshooting)
+- [Security](https://bugcrowd.com/engagements/kroger-vdp)
+- [Terms of service](https://developer.kroger.com/documentation/public/getting-started/acceptable-use)
+- [Privacy policy](https://www.kroger.com/i/privacy-policy)
+- [GitHub](https://github.com/krogertechnology)
 
-**Human URL:** [https://developer.kroger.com/api-products/api/catalog-api](https://developer.kroger.com/api-products/api/catalog-api)
+## API Evangelist rating
 
-#### Properties
+**Kin Score 41.4** — developing · rubric 0.25.0 · scored 2026-10-23
 
-- [Documentation](https://developer.kroger.com/api-products/api/catalog-api)
+| Facet | Score |
+|---|---|
+| Discoverability | 78.6 |
+| Contract quality | 0.0 |
+| Contract governance | 18.2 |
+| Operational transparency | 44.7 |
+| Developer ergonomics | 66.7 |
+| Access clarity | 42.1 |
 
-### Kroger Catalog API V2
+**Agent readiness 7.9** — agent-aware
 
-Catalog API integration let partners to access Krogers catalog data via available product endpoints. The catalog can be customized for the partners based on their needs and requirements.
-
-**Human URL:** [https://developer.kroger.com/api-products/api/catalog-api-v2](https://developer.kroger.com/api-products/api/catalog-api-v2)
-
-#### Properties
-
-- [Documentation](https://developer.kroger.com/api-products/api/catalog-api-v2)
-
-### Kroger Identity API
-
-The Identity API provides access to the profile information of an authenticated Kroger customer.
-
-**Human URL:** [https://developer.kroger.com/api-products/api/identity-api-partner](https://developer.kroger.com/api-products/api/identity-api-partner)
-
-#### Properties
-
-- [Documentation](https://developer.kroger.com/api-products/api/identity-api-partner)
-
-### Kroger Identity API (Public)
-
-The Identity API allows you to access the profile ID of an authenticated customer.
-
-**Human URL:** [https://developer.kroger.com/api-products/api/identity-api-public](https://developer.kroger.com/api-products/api/identity-api-public)
-
-#### Properties
-
-- [Documentation](https://developer.kroger.com/api-products/api/identity-api-public)
-
-### Kroger Location API (Partner)
-
-Partner APIs enable official partners to access strategic functionality and data. Since the needs of our partners determine our Partner APIs, they are not open for public consumption.
-
-**Human URL:** [https://developer.kroger.com/api-products/api/location-api-partner](https://developer.kroger.com/api-products/api/location-api-partner)
-
-#### Properties
-
-- [Documentation](https://developer.kroger.com/api-products/api/location-api-partner)
-
-### Kroger Location API (Public)
-
-The Locations API provides access to all locations, chains, and departments that are owned by The Kroger Co.
-
-**Human URL:** [https://developer.kroger.com/api-products/api/location-api-public](https://developer.kroger.com/api-products/api/location-api-public)
-
-#### Properties
-
-- [Documentation](https://developer.kroger.com/api-products/api/location-api-public)
-
-### Kroger Products API (Partners)
-
-The Products API allows you to search the Kroger product catalog.
-
-**Human URL:** [https://developer.kroger.com/api-products/api/product-api-partner](https://developer.kroger.com/api-products/api/product-api-partner)
-
-#### Properties
-
-- [Documentation](https://developer.kroger.com/api-products/api/product-api-partner)
-
-### Kroger Products API (Public)
-
-The Products API allows you to search the Kroger product catalog.
-
-**Human URL:** [https://developer.kroger.com/api-products/api/product-api-public](https://developer.kroger.com/api-products/api/product-api-public)
-
-#### Properties
-
-- [Documentation](https://developer.kroger.com/api-products/api/product-api-public)
-
-### Kroger Seamless Delivery API
-
-Partner APIs related to integrating with a full-service delivery partner.
-
-**Human URL:** [https://developer.kroger.com/api-products/api/seamless-delivery-api](https://developer.kroger.com/api-products/api/seamless-delivery-api)
-
-#### Properties
-
-- [Documentation](https://developer.kroger.com/api-products/api/seamless-delivery-api)
-
-### Kroger Locker Integration APIs (Partners)
-
-This contract outlines the APIs agreement for vendors seeking integration with Kroger as a locker vendor. The provided APIs enable partners to transmit unattended locker pickup orders state updates to Kroger.
-
-**Human URL:** [https://developer.kroger.com/api-products/api/unattended-locker-pickup](https://developer.kroger.com/api-products/api/unattended-locker-pickup)
-
-#### Properties
-
-- [Documentation](https://developer.kroger.com/api-products/api/unattended-locker-pickup)
-
-## Common Properties
-
-- [Portal](https://developer.kroger.com/) - Home | Kroger Developers
-
-## Maintainers
-
-**FN:** Kin Lane
-
-**Email:** kin@apievangelist.com
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | — |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | na |
+
+**Regulatory alignment 40.2** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/kroger/](https://apis.io/providers/kroger/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Kroger: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/kroger/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
