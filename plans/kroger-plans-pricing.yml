@@ -1,0 +1,122 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Kroger
+providerId: kroger
+created: '2026-05-04'
+# 2026-08-27: upgraded generated -> searched. The two-tier access model is now
+# confirmed against Kroger's own documentation, read anonymously from the portal
+# content API (https://developer.kroger.com/api/v1/developer/content/search.json,
+# HTTP 200) because developer.kroger.com renders every page client-side. The
+# 2026-05-04 sweep's conclusion held up: Kroger publishes NO monetary pricing for
+# either tier. What is now sourced rather than assumed is HOW each tier is
+# obtained and what it is capped at.
+method: searched
+generated: '2026-08-27'
+modified: '2026-08-27'
+reconciled: true
+tags:
+  - Groceries
+  - Retail
+  - Partner API
+description: Kroger Developer Portal does not publish a public commercial pricing page. The Public APIs
+  (Identity, Locations, Products, Cart, Authorization) are free for registered developers, while the
+  Partner APIs (Cart Partner, Location Partner, Products Partners, Seamless Delivery, Locker Integration)
+  require a partner agreement negotiated with Kroger Digital. No per-tier prices are listed publicly.
+plan_count: 2
+sources:
+  - https://developer.kroger.com/documentation/public/getting-started/quick-start
+  - https://developer.kroger.com/documentation/partner
+  - https://developer.kroger.com/documentation/support/website-help/applications
+  - https://developer.kroger.com/documentation/public/getting-started/apis
+notes: >-
+  No public pricing page exists and no price is published for either tier. The
+  Public tier is genuinely self-service and free: create an account, verify by
+  email, register an application, receive client credentials. Its cost is
+  expressed as a QUOTA rather than a price — 10,000 Products calls/day, 5,000
+  Cart, 5,000 Identity, 1,600 per Locations endpoint, shared across all clients
+  (see ../rate-limits/kroger-rate-limits.yml). The Partner tier is not
+  self-service at all: "Partner APIs are not available through our self-service
+  app registration" and access "requires a contractual agreement with Kroger."
+  Kroger's own guidance is to build on Public APIs first and request Partner
+  access only when you know you will exceed the published limits or need
+  Partner-only functionality.
+plans:
+  - id: kroger-public-developer
+    name: Public Developer
+    type: freemium
+    description: Free registered-developer access to the Kroger Public APIs. Granted by signing in to
+      developer.kroger.com and registering an application; no published cost.
+    entries:
+      - label: API access
+        name: api_access
+        type: quota
+        metric: request
+        limit: -1
+        timeFrame: usage
+        geo: US
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
+    elements:
+      - name: Kroger Authorization API (Public)
+      - name: Kroger Cart API (Public)
+      - name: Kroger Identity API (Public)
+      - name: Kroger Location API (Public)
+      - name: Kroger Products API (Public)
+  - id: kroger-partner
+    name: Partner
+    type: enterprise
+    description: Negotiated partner access to higher-privilege APIs (Cart Partner, Location Partner,
+      Products Partners, Seamless Delivery, Locker Integration, Authorization Partners). Requires a signed
+      partner agreement; pricing is not published.
+    entries:
+      - label: Partner agreement
+        name: partner_terms
+        type: subscription
+        metric: contract
+        limit: -1
+        timeFrame: month
+        geo: US
+        unit: 1
+        price: contact sales
+        userMultiplied: false
+    elements:
+      - name: Kroger Authorization API (Partners)
+      - name: Kroger Cart API (Partner)
+      - name: Kroger Catalog API
+      - name: Kroger Catalog API V2
+      - name: Kroger Identity API
+      - name: Kroger Location API (Partner)
+      - name: Kroger Products API (Partners)
+      - name: Kroger Seamless Delivery API
+      - name: Kroger Locker Integration APIs (Partners)
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
+x-canonical:
+  generated: '2026-11-01'
+  vocabulary: engine/economics/plans-canonical.yml
+  models:
+  - free
+  - subscription
+  units:
+  - negotiated
+  - request
+  plans:
+  - name: Public Developer
+    access: freemium
+    model: free
+    model_how: derived
+    units:
+    - request
+    periods:
+    - per-use
+  - name: Partner
+    access: enterprise
+    model: subscription
+    model_how: derived
+    units:
+    - negotiated
+    periods:
+    - month
