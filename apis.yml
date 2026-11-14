@@ -225,7 +225,7 @@ accessModel:
   - rate-limits
   - security
   - sandbox
-  generated: '2026-11-06'
+  generated: '2026-11-13'
   method: derived
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/kroger.png
 access: 3rd-Party
@@ -355,6 +355,14 @@ common:
   name: Kroger Public APIs Postman Collection
   description: Kroger's forkable Postman collection plus per-environment variable files.
   url: https://developer.kroger.com/documentation/public/getting-started/postman
+- type: UsageTerms
+  url: terms/kroger-terms-of-service.yml
+- type: DataProcessing
+  url: privacy/kroger-privacy-policy.yml
+- type: Eligibility
+  url: eligibility/kroger-eligibility.yml
+- type: AIPreferences
+  url: ai-preferences/kroger-ai-preferences.yml
 x-enrichment:
   date: '2026-08-27'
   status: enriched
